@@ -41,8 +41,6 @@
 
 import Mailjet from 'node-mailjet'
 
-export const config = { runtime: 'edge' } // optional: faster startup on Vercel
-
 export default async (req: Request) => {
   if (req.method !== 'POST')
     return new Response('Method Not Allowed', { status: 405 })
