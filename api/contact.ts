@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Mailjet from 'node-mailjet'
-import { handleCors } from './utils/cors.js'
+import { handleCors } from '$lib/cors.js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res, ['POST', 'GET'])) return;
