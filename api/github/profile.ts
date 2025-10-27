@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { handleCors } from '$lib/cors.js'
-import { getGitHubHeaders } from '$lib/github-headers.js'
-import { fetchGitHub } from '$lib/github-fetch.js'
-import { GITHUB_USERNAME } from '$lib/constants.js'
+import { handleCors } from '../../utils/cors.js'
+import { getGitHubHeaders } from '../../utils/github-headers.js'
+import { GITHUB_USERNAME } from '../../utils/constants.js'
+import { fetchGitHub } from '../../utils/github-fetch.js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (handleCors(req, res, ['GET'])) return
