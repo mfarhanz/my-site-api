@@ -1,39 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Mailjet from 'node-mailjet'
-
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://mfarhanz.github.io'
-]
+import { handleCors, allowedOrigins } from './_utils/cors'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const origin = req.headers.origin;
-
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+  if (handleCors(req, res, ['POST', 'GET'])) return;
 
   if (req.method === 'GET') {
-    res.status(200).send('This is the contact API. Please send a POST request with JSON.');
-    return;
-  }
-
-  if (req.method !== 'POST') {
-    res.status(405).send('Method Not Allowed');
+    res.status(200).send('You have reached the contact form\'s api endpoint for mfarhanz.pages.dev.\nNothing to see here.');
     return;
   }
 
   try {
     const { name, email, message } = req.body;
+    const catchAllAdress = 'mfz.bin@gmail.com';
 
     const mailjet = Mailjet.apiConnect(
       process.env.MJ_APIKEY_PUBLIC!,
@@ -43,9 +22,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await mailjet.post('send', { version: 'v3.1' }).request({
       Messages: [
         {
-          From: { Email: 'mfz.bin@gmail.com', Name: 'Portfolio Contact' },
-          To: [{ Email: 'mfz.bin@gmail.com', Name: 'You' }],
-          TemplateID: 7402715,
+          From: { Email: catchAllAdress, Name: 'Portfolio Contact' },
+          To: [{ Email: catchAllAdress, Name: 'You' }],
+          TemplateID: 7402715,  // sample mailjet email template id
           TemplateLanguage: true,
           Variables: {
             sender_name: name,
@@ -57,6 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     res.status(200).json({ success: true });
+
   } catch (err) {
     console.error('Mailjet error:', err);
     res.status(500).json({ success: false });
