@@ -1,5 +1,5 @@
 import type { VercelResponse } from '@vercel/node'
-import { handleError } from '$lib/handle-error.js'
+import { handleError } from '../utils/handle-error.js'
 
 export async function fetchGitHub(
     res: VercelResponse,
