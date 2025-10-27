@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-export const allowedOrigins = [
+const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:4173',
   'https://mfarhanz.pages.dev'

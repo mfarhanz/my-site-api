@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { handleCors, allowedOrigins } from './_utils/cors'
+import { handleCors } from './utils/cors'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res, ['GET'])) return
@@ -41,17 +41,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return;
         }
 
-        // res.status(200).json({
-        //   name: data.name,
-        //   description: data.description,
-        //   language: data.language,
-        //   stars: data.stargazers_count,
-        //   forks: data.forks_count,
-        //   watchers: data.watchers_count,
-        //   url: data.html_url,
-        //   updated_at: data.updated_at
-        // });
-        res.status(200).json(data);
+        res.status(200).json({
+          name: data.name,
+          description: data.description,
+          language: data.language,
+          stars: data.stargazers_count,
+          forks: data.forks_count,
+          watchers: data.watchers_count,
+          url: data.html_url,
+          updated_at: data.updated_at
+        });
         return;
       }
 
