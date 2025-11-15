@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // hp - honeypot field in client
     const { name, email, message, hp } = req.body;
 
-    console.log(hp);
+    console.log(name, email, message, hp);
     // honeypot check — if anything is filled in, it's a bot
     if (hp && hp.trim() !== '') {
       return res.status(418).json({ success: false, error: "Bot detected!" });
