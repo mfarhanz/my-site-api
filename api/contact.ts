@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Mailjet from 'node-mailjet'
 import { handleCors } from '../utils/cors.js'
+import { CATCH_ALL_ADDRESS } from '../utils/constants.js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res, ['POST', 'GET'])) return;
@@ -11,8 +12,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { name, email, message } = req.body;
-    const catchAllAdress = 'mfz.bin@gmail.com';
+    // hp - honeypot field in client
+    const { name, email, message, hp } = req.body;
+
+    console.log(hp);
+    // honeypot check — if anything is filled in, it's a bot
+    if (hp && hp.trim() !== '') {
+      return res.status(418).json({ success: false, error: "Bot detected!" });
+    }
 
     const mailjet = Mailjet.apiConnect(
       process.env.MJ_APIKEY_PUBLIC!,
@@ -22,8 +29,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await mailjet.post('send', { version: 'v3.1' }).request({
       Messages: [
         {
-          From: { Email: catchAllAdress, Name: 'Portfolio Contact' },
-          To: [{ Email: catchAllAdress, Name: 'You' }],
+          From: { Email: CATCH_ALL_ADDRESS, Name: 'Portfolio Contact' },
+          To: [{ Email: CATCH_ALL_ADDRESS, Name: 'You' }],
           TemplateID: 7402715,  // sample mailjet email template id
           TemplateLanguage: true,
           Variables: {
