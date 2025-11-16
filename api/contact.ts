@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Mailjet from 'node-mailjet'
 import { handleCors } from '../utils/cors.js'
 import { CATCH_ALL_ADDRESS } from '../utils/constants.js'
+import { verifyNonce } from '../utils/verify-key.js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res, ['POST', 'GET'])) return;
@@ -13,12 +14,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // hp - honeypot field in client
-    const { name, email, message, hp } = req.body;
+    const { name, email, message, hp, nonce } = req.body;
 
-    console.log(name, email, message, hp);
     // honeypot check — if anything is filled in, it's a bot
     if (hp && hp.trim() !== '') {
       return res.status(418).json({ success: false, error: "Bot detected!" });
+    }
+
+    // check if request is coming from the contacts/ page of my site, by checking the provided nonce
+    if (!verifyNonce(nonce)) {
+      return res.status(401).json({ success: false, error: "Invalid/missing nonce!" });
     }
 
     const mailjet = Mailjet.apiConnect(
