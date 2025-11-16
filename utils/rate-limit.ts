@@ -7,8 +7,8 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-export async function checkRateLimit(ip: any) {
-  if (!ip) return false;
+export async function checkRateLimit(ip: string) {
+  if (!ip) return { allowed: false, retryIn: null };
 
   const key = `ratelimit:contact:${ip}`;
 
@@ -21,5 +21,10 @@ export async function checkRateLimit(ip: any) {
   }
 
   // If they exceeded RL_MAX_REQUESTS → block
-  return current <= RL_MAX_REQUESTS;
+  if (current > RL_MAX_REQUESTS) {
+    const ttl = await redis.ttl(key); // seconds left
+    return { allowed: false, retryIn: ttl };
+  }
+
+  return { allowed: true, retryIn: null };
 }
