@@ -5,12 +5,14 @@ export function verifyNonce(nonce: string) {
 
 	const [payload, signature] = nonce.split('.');
 	if (!payload || !signature) return false;
+    console.log(payload, signature)
 
 	const expectedSig = crypto
 		.createHmac('sha256', process.env.NONCE_SECRET!)
 		.update(payload)
 		.digest('hex');
-
+    
+    console.log(expectedSig)
 	// using timingSafeEqual to avoid timing attacks
 	const valid =
 		signature.length === expectedSig.length &&
