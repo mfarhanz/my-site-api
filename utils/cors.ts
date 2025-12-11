@@ -1,9 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const allowedOrigins = [
-  'http://localhost:5173',
+  'http://localhost:5173',  // TODO: separate origins into production and dev
   'http://localhost:4173',
-  'https://mfarhanz.pages.dev'
+  'https://mfarhanz.pages.dev',
+  'https://mfarhanz.dev'
 ]
 
 export function handleCors(

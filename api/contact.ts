@@ -49,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 {
                     From: { Email: CATCH_ALL_ADDRESS, Name: 'Portfolio Contact' },
                     To: [{ Email: CATCH_ALL_ADDRESS, Name: 'You' }],
-                    TemplateID: 7402715,  // sample mailjet email template id
+                    TemplateID: 7402715,  // mailjet email template id (created in the Mailjet dashboard)
                     TemplateLanguage: true,
                     Variables: {
                         sender_name: name,
